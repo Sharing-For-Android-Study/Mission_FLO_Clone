@@ -47,10 +47,20 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        binding.homePannelAlbumImg01Iv.setOnClickListener {
+            (context as MainActivity).supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_frm, AlbumFragment())
+                .commitAllowingStateLoss()
+        }
+
         // AlbumList에 더미 값들 넣어주기
-        inputDummyAlbums()
-        songDB = SongDatabase.getInstance(requireContext())!!
-        albumDatas.addAll(songDB.albumDao().getAlbums())
+        inputDummyAlbums() // 1. 더미 값들을 생성
+        songDB = SongDatabase.getInstance(requireContext())!! // 2. songDB라는 SongDatabase의 객체에 더미 값을 넣어줌
+        albumDatas.addAll(songDB.albumDao().getAlbums()) // 3. 실제로 어댑터에서 사용하는 것은 albumDatas이므로, songDB의 앨범 테이블을 ArrayList의 형태로 반환하고, 그것을 albumDatas에 추가
+
+        // albumDatas: AlbumList<Album>에 직접 값 넣어주고
         /**
          * 오늘 발매 음악
          * 앨범을 horizontal하게 리사이클러 뷰로 나타내는 부분
@@ -59,7 +69,7 @@ class HomeFragment : Fragment() {
         binding.homeTodayMusicAlbumRv.adapter = albumRVAdapter
         binding.homeTodayMusicAlbumRv.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
 
-        albumRVAdapter.setItemClickListener(object: AlbumRVAdapter.OnItemClickListener {
+/*        albumRVAdapter.setItemClickListener(object: AlbumRVAdapter.OnItemClickListener {
             override fun onItemClick(album: Album) {
                 TODO("Not yet implemented")
             }
@@ -69,7 +79,7 @@ class HomeFragment : Fragment() {
             }
         })
 
-
+*/
         /**
          * Pannel 출력
          */
@@ -107,7 +117,7 @@ class HomeFragment : Fragment() {
         songDB.albumDao().insert(
             Album(
                 3,
-                "iSScreaM Vol.10: Next Level Remixes",
+                "iScreaM Vol.10: Next Level Remixes",
                 "에스파 (AESPA)",
                 R.drawable.img_album_exp3
             ))
@@ -125,8 +135,5 @@ class HomeFragment : Fragment() {
                 "모모랜드 (MOMOLAND)",
                 R.drawable.img_album_exp5
             ))
-
-        val songDBData = songDB.albumDao().getAlbums()
-        Log.d("DB data", songDBData.toString())
     }
 }
